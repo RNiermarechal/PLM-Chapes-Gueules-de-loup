@@ -1,0 +1,98 @@
+Exemple de deplacement d'un composant d'un assemblage.
+
+Ouvrir un assemblage dans CATIA
+Puis Alt+F11 ou  Outils->macros..->Editeur Visual Basic 
+Inserer un module  (Insertion->Module)
+Copier-Coller le code situé entre les lignes *********************************
+Changer dans la ligne:
+	Set monproduct_a_bouger = products1.Item("toto.1")   mettre un nom existant (celui qui est entre paranthése dans l'arbre) c'est le nom d'instance 
+Executer !
+
+
+Pour lister tous les noms des composants (c'est commenté dans le code):
+
+Dim i as integer
+For i =1 to products1.count
+	msgbox ("Composant numéro: " & i & " ->  "& products1.item(i).name)
+next
+
+
+*********************************************************************************************************************************************
+Sub CATMain()
+
+Dim productDocument1 As ProductDocument
+Set productDocument1 = CATIA.ActiveDocument    ' Le document ouvert dans CATIA
+
+Dim product1 As Product
+Set product1 = productDocument1.Product         'Le produit racine (rootproduct) du document CATIA
+
+Dim products1 As Products
+Set products1 = product1.Products               'La collection de tous les composants de l'assemblage
+
+'lister tous les noms des composants: pour activer la liste il faut supprimer les ' des 4 lignes suivantes
+
+'Dim i as integer
+'For i =1 to products1.count
+'	msgbox ("Composant numéro: " & i & " ->  "& products1.item(i).name)
+'next
+
+
+Dim matrix(11)
+
+Dim monproduct_a_bouger As Object
+Set monproduct_a_bouger = products1.Item("toto.1")     'on recupére le composant nommé "toto.1"  on peut aussi utiliser products1.item(3) pour avoir le 3eme
+                                                        ' ou boucler de 1 a products1.count pour tous les avoir
+
+monproduct_a_bouger.Position.GetComponents (matrix)     ' on recupére dans la variable matrix la position actuelle
+
+'affichage de la matrice
+MatrixPrint "Position", matrix
+'MsgBox ("Position:" & vbCrLf & matrix(0) & matrix(1) & matrix(2) & vbCrLf & matrix(3) & matrix(4) & matrix(5) & vbCrLf & matrix(6) & matrix(7) & matrix(8) & vbCrLf & matrix(9) & matrix(10) & matrix(11))
+
+' on ajoute 20 a la position actuelle du 9eme terme (Translation suivant x)
+matrix(9) = matrix(9) + 20
+monproduct_a_bouger.Position.SetComponents (matrix)             'on applique la nouvelle matrice
+CATIA.RefreshDisplay = True
+
+End Sub
+
+
+Sub MatrixPrint(ByVal sName, ByVal matrix)
+    Dim a(11)
+    Dim I As Integer
+    
+    For I = 0 To 11
+        If ((matrix(I) < 0.001) And (matrix(I) > -0.001)) Then
+            a(I) = 0#
+        Else
+            a(I) = matrix(I)
+        End If
+    Next
+
+    MsgBox sName + " = " + CStr(a(0)) + ",  " + CStr(a(1)) + ",  " + CStr(a(2)) + ",  " + CStr(a(3)) + ",  " + CStr(a(4)) + ",  " + CStr(a(5)) + ",  " + CStr(a(6)) + ",  " + CStr(a(7)) + ",  " + CStr(a(8)) + ",  " + CStr(a(9)) + ",  " + CStr(a(10)) + ",  " + CStr(a(11))
+
+
+End Sub
+*********************************************************************************************************************************************
+-------------------------------------------------------------------------------------------------
+La matrice est un tableau de 12 valeurs (de 0 à 11)
+Les 9 premiers termes (3x3) définissent les vecteurs X,Y et Z
+Les 3 derniers termes  9-10-11 l'origine du repére  (translation)
+
+Exemple:
+ ' x axis components
+ matrix( 0 )  = 1.000
+ matrix( 1 )  = 0
+ matrix( 2 )  = 0.707
+ ' y axis components
+ matrix( 3 )  = 0
+ matrix( 4 )  = 0
+ matrix( 5 )  = 0.707
+ ' z axis components
+ matrix( 6 )  = 0
+ matrix( 7 )  = -0.707
+ matrix( 8 )  = 0.707
+ ' origin point coordinates
+ matrix( 9 )  = 1.000
+ matrix( 10 ) = 2.000
+ matrix( 11 ) = 3.000
