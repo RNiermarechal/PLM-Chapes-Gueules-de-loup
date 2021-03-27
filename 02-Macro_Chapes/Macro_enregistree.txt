@@ -1,0 +1,213 @@
+Dim reference3 As Reference
+Set reference3 = part1.CreateReferenceFromObject(hybridShapeLinePtPt1)
+
+Dim reference4 As Reference
+Set reference4 = part1.CreateReferenceFromObject(hybridShapePointExplicit2)
+Sub CATMain()
+
+Dim documents1 As Documents
+Set documents1 = CATIA.Documents
+
+Dim partDocument1 As PartDocument
+Set partDocument1 = documents1.Item("Tube1.CATPart")
+
+Dim part1 As Part
+Set part1 = partDocument1.Part
+
+Dim hybridShapeFactory1 As HybridShapeFactory
+Set hybridShapeFactory1 = part1.HybridShapeFactory
+
+Dim parameters1 As Parameters
+Set parameters1 = part1.Parameters
+
+Dim hybridShapePointExplicit1 As HybridShapePointExplicit
+Set hybridShapePointExplicit1 = parameters1.Item("Point.3")
+
+Dim reference1 As Reference
+Set reference1 = part1.CreateReferenceFromObject(hybridShapePointExplicit1)
+
+Dim parameters2 As Parameters
+Set parameters2 = part1.Parameters
+
+Dim hybridShapePointExplicit2 As HybridShapePointExplicit
+Set hybridShapePointExplicit2 = parameters2.Item("Point.4")
+
+Dim reference2 As Reference
+Set reference2 = part1.CreateReferenceFromObject(hybridShapePointExplicit2)
+
+Dim hybridShapeLinePtPt1 As HybridShapeLinePtPt
+Set hybridShapeLinePtPt1 = hybridShapeFactory1.AddNewLinePtPt(reference1, reference2)
+
+Dim bodies1 As Bodies
+Set bodies1 = part1.Bodies
+
+Dim body1 As Body
+Set body1 = bodies1.Item("Corps principal")
+
+body1.InsertHybridShape hybridShapeLinePtPt1
+
+part1.InWorkObject = hybridShapeLinePtPt1
+
+part1.Update
+
+Dim reference3 As Reference
+Set reference3 = part1.CreateReferenceFromObject(hybridShapeLinePtPt1)
+
+Dim reference4 As Reference
+Set reference4 = part1.CreateReferenceFromObject(hybridShapePointExplicit2)
+
+Dim hybridShapePlaneNormal1 As HybridShapePlaneNormal
+Set hybridShapePlaneNormal1 = hybridShapeFactory1.AddNewPlaneNormal(reference3, reference4)
+
+body1.InsertHybridShape hybridShapePlaneNormal1
+
+part1.InWorkObject = hybridShapePlaneNormal1
+
+part1.Update
+
+Dim sketches1 As Sketches
+Set sketches1 = body1.Sketches
+
+Dim hybridShapes1 As HybridShapes
+Set hybridShapes1 = body1.HybridShapes
+
+Dim reference5 As Reference
+Set reference5 = hybridShapes1.Item("Plan.1")
+
+Dim sketch1 As Sketch
+Set sketch1 = sketches1.Add(reference5)
+
+Dim arrayOfVariantOfDouble1(8)
+arrayOfVariantOfDouble1(0) = 0#
+arrayOfVariantOfDouble1(1) = -51.827642
+arrayOfVariantOfDouble1(2) = -27.756762
+arrayOfVariantOfDouble1(3) = 1#
+arrayOfVariantOfDouble1(4) = 0#
+arrayOfVariantOfDouble1(5) = 0#
+arrayOfVariantOfDouble1(6) = 0#
+arrayOfVariantOfDouble1(7) = -0.472115
+arrayOfVariantOfDouble1(8) = 0.881537
+Set sketch1Variant = sketch1
+sketch1Variant.SetAbsoluteAxisData arrayOfVariantOfDouble1
+
+part1.InWorkObject = sketch1
+
+Dim factory2D1 As Factory2D
+Set factory2D1 = sketch1.OpenEdition()
+
+Dim geometricElements1 As GeometricElements
+Set geometricElements1 = sketch1.GeometricElements
+
+Dim axis2D1 As Axis2D
+Set axis2D1 = geometricElements1.Item("Repère")
+
+Dim line2D1 As Line2D
+Set line2D1 = axis2D1.GetItem("Axe horizontal")
+
+line2D1.ReportName = 1
+
+Dim line2D2 As Line2D
+Set line2D2 = axis2D1.GetItem("Axe vertical")
+
+line2D2.ReportName = 2
+
+Dim point2D1 As Point2D
+Set point2D1 = factory2D1.CreatePoint(0#, 0#)
+
+point2D1.ReportName = 3
+
+Dim circle2D1 As Circle2D
+Set circle2D1 = factory2D1.CreateClosedCircle(0#, 0#, 15#)
+
+circle2D1.CenterPoint = point2D1
+
+circle2D1.ReportName = 4
+
+Dim point2D2 As Point2D
+Set point2D2 = factory2D1.CreatePoint(15#, 0#)
+
+point2D2.ReportName = 5
+
+Dim parameters3 As Parameters
+Set parameters3 = part1.Parameters
+
+Dim reference6 As Reference
+Set reference6 = parameters3.Item("Point.4")
+
+Dim geometricElements2 As GeometricElements
+Set geometricElements2 = factory2D1.CreateProjections(reference6)
+
+Dim geometry2D1 As Geometry2D
+Set geometry2D1 = geometricElements2.Item("Empreinte.1")
+
+geometry2D1.Construction = True
+
+Dim constraints1 As Constraints
+Set constraints1 = sketch1.Constraints
+
+Dim reference7 As Reference
+Set reference7 = part1.CreateReferenceFromObject(circle2D1)
+
+Dim reference8 As Reference
+Set reference8 = part1.CreateReferenceFromObject(point2D2)
+
+Dim constraint1 As Constraint
+Set constraint1 = constraints1.AddBiEltCst(catCstTypeOn, reference7, reference8)
+
+constraint1.Mode = catCstModeDrivingDimension
+
+Dim reference9 As Reference
+Set reference9 = part1.CreateReferenceFromObject(point2D2)
+
+Dim reference10 As Reference
+Set reference10 = part1.CreateReferenceFromObject(line2D1)
+
+Dim constraint2 As Constraint
+Set constraint2 = constraints1.AddBiEltCst(catCstTypeOn, reference9, reference10)
+
+constraint2.Mode = catCstModeDrivingDimension
+
+Dim reference11 As Reference
+Set reference11 = part1.CreateReferenceFromObject(geometry2D1)
+
+Dim reference12 As Reference
+Set reference12 = part1.CreateReferenceFromObject(point2D1)
+
+Dim constraint3 As Constraint
+Set constraint3 = constraints1.AddBiEltCst(catCstTypeOn, reference11, reference12)
+
+constraint3.Mode = catCstModeDrivingDimension
+
+Dim reference13 As Reference
+Set reference13 = part1.CreateReferenceFromObject(circle2D1)
+
+Dim constraint4 As Constraint
+Set constraint4 = constraints1.AddMonoEltCst(catCstTypeRadius, reference13)
+
+constraint4.Mode = catCstModeDrivingDimension
+
+Dim length1 As Length
+Set length1 = constraint4.Dimension
+
+length1.Value = 15#
+
+sketch1.CloseEdition
+
+part1.InWorkObject = sketch1
+
+part1.Update
+
+Dim shapeFactory1 As ShapeFactory
+Set shapeFactory1 = part1.ShapeFactory
+
+Dim pocket1 As Pocket
+Set pocket1 = shapeFactory1.AddNewPocket(sketch1, 150#)
+
+Dim limit1 As Limit
+Set limit1 = pocket1.FirstLimit
+
+limit1.LimitMode = catUpToLastLimit
+
+part1.Update
+
+End Sub
